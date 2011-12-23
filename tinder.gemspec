@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'fakeweb', '~> 1.3'
   gem.add_development_dependency 'rake', '~> 0.8'
   gem.add_development_dependency 'rspec', '~> 2.6'
-  gem.add_runtime_dependency 'activesupport', ['>= 2.3', '< 4']
+  gem.add_runtime_dependency 'yajl-ruby', ['>= 1.1.0']
   gem.add_runtime_dependency 'eventmachine', '~> 0.12'
   gem.add_runtime_dependency 'faraday', ['>= 0.6', '< 0.8']
   gem.add_runtime_dependency 'faraday_middleware', ['>= 0.6', '< 0.8']
@@ -15,6 +15,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'multi_json', '~> 1.0'
   gem.add_runtime_dependency 'multipart-post', '~> 1.1'
   gem.add_runtime_dependency 'twitter-stream', '~> 0.1'
+  gem.add_runtime_dependency 'chronic', '>= 0.6.6'
 
   gem.authors = ["Brandon Keepers", "Brian Ryckbost"]
   gem.description = %q{A Ruby API for interfacing with Campfire, the 37Signals chat application.}

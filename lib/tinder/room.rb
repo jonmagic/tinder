@@ -1,4 +1,6 @@
 # encoding: UTF-8
+require 'chronic'
+
 module Tinder
   # A campfire room
   class Room
@@ -104,7 +106,7 @@ module Tinder
           user_data = connection.get("/users/#{id}.json")
           user = user_data && user_data[:user]
         end
-        user[:created_at] = Time.parse(user[:created_at])
+        user[:created_at] = Chronic.parse(user[:created_at])
         user
       end
     end
@@ -133,7 +135,7 @@ module Tinder
       Tinder.logger.info "Joining #{@name}…"
       join # you have to be in the room to listen
 
-      require 'active_support/json'
+      require 'yajl'
       require 'hashie'
       require 'multi_json'
       require 'twitter/json_stream'
@@ -154,7 +156,7 @@ module Tinder
         @stream.each_item do |message|
           message = Hashie::Mash.new(MultiJson.decode(message))
           message[:user] = user(message.delete(:user_id))
-          message[:created_at] = Time.parse(message[:created_at])
+          message[:created_at] = Chronic.parse(message[:created_at])
           yield(message)
         end
 
@@ -185,7 +187,7 @@ module Tinder
 
     # Get the transcript for the given date (Returns a hash in the same format as #listen)
     #
-    #   room.transcript(room.available_transcripts.first)
+    #   room.transcript('yesterday')
     #   #=> [{:message=>"foobar!",
     #         :user_id=>"99999",
     #         :person=>"Brandon",
@@ -195,12 +197,12 @@ module Tinder
     # The timestamp slot will typically have a granularity of five minutes.
     #
     def transcript(transcript_date)
-      url = "/room/#{@id}/transcript/#{transcript_date.to_date.strftime('%Y/%m/%d')}.json"
+      url = "/room/#{@id}/transcript/#{Chronic.parse(transcript_date).strftime('%Y/%m/%d')}.json"
       connection.get(url)['messages'].map do |room|
         { :id => room['id'],
           :user_id => room['user_id'],
           :message => room['body'],
-          :timestamp => Time.parse(room['created_at']) }
+          :timestamp => Chronic.parse(room['created_at']) }
       end
     end
 
