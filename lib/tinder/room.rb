@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require 'chronic'
+require 'time'
 
 module Tinder
   # A campfire room
@@ -106,7 +106,7 @@ module Tinder
           user_data = connection.get("/users/#{id}.json")
           user = user_data && user_data[:user]
         end
-        user[:created_at] = Chronic.parse(user[:created_at])
+        user[:created_at] = Time.parse(user[:created_at])
         user
       end
     end
@@ -156,7 +156,7 @@ module Tinder
         @stream.each_item do |message|
           message = Hashie::Mash.new(MultiJson.decode(message))
           message[:user] = user(message.delete(:user_id))
-          message[:created_at] = Chronic.parse(message[:created_at])
+          message[:created_at] = Time.parse(message[:created_at])
           yield(message)
         end
 
@@ -197,12 +197,12 @@ module Tinder
     # The timestamp slot will typically have a granularity of five minutes.
     #
     def transcript(transcript_date)
-      url = "/room/#{@id}/transcript/#{Chronic.parse(transcript_date).strftime('%Y/%m/%d')}.json"
+      url = "/room/#{@id}/transcript/#{Time.parse(transcript_date).strftime('%Y/%m/%d')}.json"
       connection.get(url)['messages'].map do |room|
         { :id => room['id'],
           :user_id => room['user_id'],
           :message => room['body'],
-          :timestamp => Chronic.parse(room['created_at']) }
+          :timestamp => Time.parse(room['created_at']) }
       end
     end
 
